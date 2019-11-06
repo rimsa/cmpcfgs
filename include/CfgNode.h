@@ -90,16 +90,13 @@ public:
 
 	struct Edge {
 		CfgNode* node;
-		bool virtua;
 
-		Edge(CfgNode* node) : node(node), virtua(false) {}
-		Edge(CfgNode* node, bool virtua) : node(node), virtua(virtua) {}
-		Edge(const Edge& e) : node(e.node), virtua(e.virtua) {}
+		Edge(CfgNode* node) : node(node) {}
+		Edge(const Edge& e) : node(e.node) {}
 		virtual ~Edge() {}
 
 		Edge& operator=(const Edge& e) {
 			node = e.node;
-			virtua = e.virtua;
 			return *this;
 		}
 
@@ -124,14 +121,14 @@ public:
 
 	int countSuccessors() const { return m_succs.size(); }
 	bool hasSuccessors() const { return m_succs.size() > 0; }
-	bool addSuccessor(CfgNode* succ, bool virtua = false);
+	bool addSuccessor(CfgNode* succ);
 	void addSuccessors(const std::set<CfgNode::Edge>& succs);
 	bool removeSuccessor(CfgNode* succ);
 	void clearSuccessors();
 
 	int countPredecessor() const { return m_preds.size(); }
 	bool hasPredecessor() const { return m_preds.size() > 0; }
-	bool addPredecessor(CfgNode* pred, bool virtua = false);
+	bool addPredecessor(CfgNode* pred);
 	void addPredecessors(const std::set<CfgNode::Edge>& preds);
 	bool removePredecessor(CfgNode* pred);
 	void clearPredecessors();

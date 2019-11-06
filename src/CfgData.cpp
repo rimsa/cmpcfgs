@@ -38,9 +38,7 @@ CfgData::CfgData(CFG* cfg) {
 
 		for (CfgNode::Edge edgeSucc : node->successors()) {
 			Addr to = CfgNode::node2addr(edgeSucc.node);
-			bool virtua = edgeSucc.virtua;
-
-			m_edges.insert(CfgData::Edge(from, to, virtua));
+			m_edges.insert(CfgData::Edge(from, to));
 		}
 
 		if (node->type() != CfgNode::CFG_BLOCK)

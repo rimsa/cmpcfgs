@@ -60,8 +60,7 @@ private:
 			TKN_ADDR,
 			TKN_NUMBER,
 			TKN_BOOL,
-			TKN_TEXT,
-			TKN_PRIME
+			TKN_TEXT
 		};
 
 		enum Type type;

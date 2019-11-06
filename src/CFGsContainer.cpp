@@ -136,10 +136,6 @@ CFGsContainer::Lexeme CFGsContainer::nextToken() {
 				} else if (c == '\"') {
 					lex.type = Lexeme::TKN_TEXT;
 					state = 6;
-				} else if (c == '\'') {
-					lex.token += (char) c;
-					lex.type = Lexeme::TKN_PRIME;
-					state = 8;
 				} else if (c == '#') {
 					state = 7;
 				} else if (c == -1) {
@@ -360,17 +356,10 @@ void CFGsContainer::processCFGs() {
 						   m_currentToken.type == Lexeme::TKN_EXIT ||
 						   m_currentToken.type == Lexeme::TKN_HALT) {
 						CfgNode* succ;
-						bool virtua = false;
-
 						switch (m_currentToken.type) {
 							case Lexeme::TKN_ADDR:
 								addr = m_currentToken.data.addr;
 								matchToken(Lexeme::TKN_ADDR);
-
-								if (m_currentToken.type == Lexeme::TKN_PRIME) {
-									matchToken(Lexeme::TKN_PRIME);
-									virtua = true;
-								}
 
 								if (!(succ = cfg->nodeByAddr(addr))) {
 									CfgNode::PhantomData* phantomData =
@@ -407,7 +396,7 @@ void CFGsContainer::processCFGs() {
 								assert(false);
 						}
 
-						cfg->addEdge(block, succ, virtua);
+						cfg->addEdge(block, succ);
 					}
 					matchToken(Lexeme::TKN_BRACKET_CLOSE);
 

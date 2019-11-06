@@ -67,12 +67,11 @@ void CfgNode::setData(CfgNode::Data* data) {
 	assert(false);
 }
 
-bool CfgNode::addSuccessor(CfgNode* succ, bool virtua) {
+bool CfgNode::addSuccessor(CfgNode* succ) {
 	assert(this->type() != CfgNode::CFG_EXIT && this->type() != CfgNode::CFG_HALT);
 	assert(succ->type() != CfgNode::CFG_ENTRY);
-	assert(!virtua || (succ->type() != CfgNode::CFG_EXIT && succ->type() != CfgNode::CFG_HALT));
 
-	return m_succs.insert(CfgNode::Edge(succ, virtua)).second;
+	return m_succs.insert(CfgNode::Edge(succ)).second;
 }
 
 void CfgNode::addSuccessors(const std::set<CfgNode::Edge>& succs) {
@@ -87,13 +86,12 @@ void CfgNode::clearSuccessors() {
 	m_succs.clear();
 }
 
-bool CfgNode::addPredecessor(CfgNode* pred, bool virtua) {
+bool CfgNode::addPredecessor(CfgNode* pred) {
 	assert(this->type() != CfgNode::CFG_ENTRY);
 	assert(pred->type() != CfgNode::CFG_PHANTOM);
 	assert(pred->type() != CfgNode::CFG_EXIT && pred->type() != CfgNode::CFG_HALT);
-	assert(!virtua || pred->type() != CfgNode::CFG_ENTRY);
 
-	return m_preds.insert(CfgNode::Edge(pred, virtua)).second;
+	return m_preds.insert(CfgNode::Edge(pred)).second;
 }
 
 void CfgNode::addPredecessors(const std::set<CfgNode::Edge>& preds) {

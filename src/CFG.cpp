@@ -138,12 +138,12 @@ bool CFG::containsNode(CfgNode* node) {
 	}
 }
 
-void CFG::addEdge(CfgNode* from, CfgNode* to, bool virtua) {
+void CFG::addEdge(CfgNode* from, CfgNode* to) {
 	assert(from != 0 && this->containsNode(from));
 	assert(to != 0 && this->containsNode(to));
 
-	from->addSuccessor(to, virtua);
-	to->addPredecessor(from, virtua);
+	from->addSuccessor(to);
+	to->addPredecessor(from);
 
 	m_status = CFG::UNCHECKED;
 }
@@ -373,9 +373,6 @@ std::string CFG::toDOT() const {
 				default:
 					assert(false);
 			}
-
-			if (it->virtua)
-				ss << " [style=dashed]";
 
 			ss << std::endl;
 		}

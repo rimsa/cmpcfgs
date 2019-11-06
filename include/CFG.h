@@ -53,7 +53,7 @@ public:
 	std::list<CfgNode*> nodes() const;
 
 	bool containsNode(CfgNode* node);
-	void addEdge(CfgNode* from, CfgNode* to, bool virtua = false);
+	void addEdge(CfgNode* from, CfgNode* to);
 
 	void markInsideMain();
 	void setFunctionName(const std::string& functionName);

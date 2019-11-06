@@ -55,10 +55,8 @@ public:
 	// if the to is zero the edge is to the exit node.
 	struct Edge {
 		Addr from, to;
-		bool virtua;
-
-		Edge(Addr from, Addr to, bool virtua = false)
-			: from(from), to(to), virtua(virtua) {}
+		Edge(Addr from, Addr to)
+			: from(from), to(to) {}
 		virtual ~Edge() {}
 
 	    bool operator<(const Edge& e) const {
