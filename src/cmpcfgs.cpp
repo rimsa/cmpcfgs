@@ -67,7 +67,7 @@ void usage(char* progname) {
 	std::cout << "                        can be used multiple times" << std::endl;
 	std::cout << "   -A   File        Load file with addresses, one address per line" << std::endl;
 	std::cout << "                        can be used multiple times" << std::endl;
-	std::cout << "   -i   File        Instructions map (address:assembly per entry) file" << std::endl;
+	std::cout << "   -i   File        Instructions map (address:size:assembly per entry) file" << std::endl;
 	std::cout << "   -o   File        Output statistics report file" << std::endl;
 	std::cout << "   -d   Directory   Dump DOT cfgs in directory" << std::endl;
 	std::cout << std::endl;

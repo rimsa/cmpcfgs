@@ -63,11 +63,23 @@ void Instruction::load(std::string filename) {
 		if (addr == 0)
 			continue;
 
-		std::string text = line.substr(n+1);
+		std::string tmp = line.substr(n+1);
+		if (tmp.empty())
+			continue;
+
+		n = tmp.find(':');
+		if (n == std::string::npos)
+			continue;
+
+		int size = std::stoi(tmp);
+		if (size <= 0)
+			continue;
+
+		std::string text = tmp.substr(n+1);
 		if (text.empty())
 			continue;
 
-		Instruction* instr = Instruction::get(addr, 0);
+		Instruction* instr = Instruction::get(addr, size);
 		instr->m_text = text;
 	}
 
