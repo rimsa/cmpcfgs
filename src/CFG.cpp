@@ -30,7 +30,7 @@
 #include <CFG.h>
 
 CFG::CFG(Addr addr) : m_addr(addr), m_status(CFG::UNCHECKED),
-		m_insideMain(false), m_functionName("unknown"),
+		m_functionName("unknown"),
 		m_entryNode(new CfgNode(CfgNode::CFG_ENTRY)),
 		m_exitNode(0), m_haltNode(0) {
 }
@@ -74,13 +74,6 @@ std::list<CfgNode*> CFG::nodes() const {
 	);
 
 	return nodes;
-}
-
-void CFG::markInsideMain() {
-	if (!m_insideMain) {
-		m_insideMain = true;
-		m_status = CFG::UNCHECKED;
-	}
 }
 
 void CFG::setFunctionName(const std::string& functionName) {

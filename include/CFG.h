@@ -42,7 +42,6 @@ public:
 	virtual ~CFG();
 
 	Addr addr() const { return m_addr; }
-	bool isInsideMain() const { return m_insideMain; }
 	const std::string& functionName() const { return m_functionName; }
 	enum Status status() const { return m_status; }
 
@@ -55,7 +54,6 @@ public:
 	bool containsNode(CfgNode* node);
 	void addEdge(CfgNode* from, CfgNode* to);
 
-	void markInsideMain();
 	void setFunctionName(const std::string& functionName);
 	void addNode(CfgNode* node);
 
@@ -68,7 +66,6 @@ public:
 private:
 	Addr m_addr;
 	enum Status m_status;
-	bool m_insideMain;
 	std::string m_functionName;
 	CfgNode* m_entryNode;
 	CfgNode* m_exitNode;

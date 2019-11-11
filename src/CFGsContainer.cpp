@@ -282,11 +282,6 @@ void CFGsContainer::processCFGs() {
 						m_cfgsMap[addr] = cfg;
 					}
 
-					bool insideMain = m_currentToken.data.boolean;
-					matchToken(Lexeme::TKN_BOOL);
-					if (insideMain)
-						cfg->markInsideMain();
-
 					std::string name = m_currentToken.token;
 					matchToken(Lexeme::TKN_TEXT);
 					cfg->setFunctionName(name);
@@ -321,15 +316,20 @@ void CFGsContainer::processCFGs() {
 						cfg->addNode(block);
 					}
 
+					int block_size = m_currentToken.data.number;
+					matchToken(Lexeme::TKN_NUMBER);
+
 					matchToken(Lexeme::TKN_BRACKET_OPEN);
 					while (m_currentToken.type == Lexeme::TKN_NUMBER) {
-						int size = m_currentToken.data.number;
+						int instr_size = m_currentToken.data.number;
 						matchToken(Lexeme::TKN_NUMBER);
 
-						blockData->addInstruction(Instruction::get(addr, size));
-						addr += size;
+						blockData->addInstruction(Instruction::get(addr, instr_size));
+						addr += instr_size;
 					}
 					matchToken(Lexeme::TKN_BRACKET_CLOSE);
+
+					assert((addr - blockData->addr()) == block_size);
 
 					matchToken(Lexeme::TKN_BRACKET_OPEN);
 					while (m_currentToken.type == Lexeme::TKN_ADDR) {
