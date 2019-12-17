@@ -72,18 +72,18 @@ public:
 	};
 
 	struct Call {
-		Addr instr;
+		Addr block_addr;
 		std::set<Addr> calls;
 
-		Call(Addr instr) : instr(instr) {}
+		Call(Addr block_addr) : block_addr(block_addr) {}
 		virtual ~Call() {}
 
 	    bool operator<(const Call& c) const {
-	    		return instr < c.instr;
+			return block_addr < c.block_addr;
 	    }
 
 	    bool operator==(const Call& c) const {
-	        return instr == c.instr;
+	        return block_addr == c.block_addr;
 	    }
 	};
 

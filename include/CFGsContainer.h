@@ -53,6 +53,8 @@ private:
 			TKN_EOF,
 			TKN_BRACKET_OPEN,
 			TKN_BRACKET_CLOSE,
+			TKN_COLON,
+			TKN_ARROW,
 			TKN_CFG,
 			TKN_NODE,
 			TKN_EXIT,
@@ -68,7 +70,7 @@ private:
 
 		union {
 			Addr addr;
-			int number;
+			unsigned long long number;
 			bool boolean;
 		} data;
 

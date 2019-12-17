@@ -192,7 +192,7 @@ void CFG::compress() {
 		// Check if the predecessor has no indirect jumps or calls.
 		CfgNode::BlockData* predData = static_cast<CfgNode::BlockData*>(pred->data());
 		assert(predData != 0);
-		if (predData->hasIndirection() || predData->calls().size() > 0) {
+		if (predData->isIndirect() || predData->calls().size() > 0) {
 			it++;
 			continue;
 		}
@@ -312,7 +312,7 @@ std::string CFG::toDOT() const {
 
 				ss << "  }\"]" << std::endl;
 
-                if (blockData->hasIndirection()) {
+                if (blockData->isIndirect()) {
                 		ss << "  \"Unknown" << std::dec << unknown << "\" [label=\"?\", shape=none]" << std::endl;
                 		ss << "  \"0x" << std::hex << blockData->addr() << "\" -> \"Unknown" << std::dec << unknown << "\" [style=dashed]" << std::endl;
                     unknown++;

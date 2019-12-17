@@ -24,6 +24,7 @@
 
 #include <cassert>
 
+#include <CFG.h>
 #include <CfgNode.h>
 
 CfgNode::CfgNode(enum CfgNode::Type type) : m_type(type), m_data(0) {
@@ -150,10 +151,19 @@ void CfgNode::BlockData::addCall(CFG* cfg) {
 	m_calls.insert(cfg);
 }
 
-void CfgNode::BlockData::addCalls(const std::set<CFG*>& calls) {
-	m_calls.insert(calls.cbegin(), calls.cend());
-}
-
 void CfgNode::BlockData::clearCalls() {
 	m_calls.clear();
+}
+
+void CfgNode::BlockData::addSignalHandler(int sigid, CFG* cfg) {
+	std::map<int, CFG*>::const_iterator it = m_signalHandlers.find(sigid);
+	if (it != m_signalHandlers.end()) {
+		assert(it->second->addr() == cfg->addr());
+	} else {
+		m_signalHandlers[sigid] = cfg;
+	}
+}
+
+void CfgNode::BlockData::clearSignalHandlers() {
+	m_signalHandlers.clear();
 }

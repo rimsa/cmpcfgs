@@ -65,27 +65,32 @@ public:
 		virtual ~BlockData() {};
 
 		int size() const { return m_size; }
-		bool hasIndirection() const { return m_indirection; }
-		const std::list<Instruction*>& instructions() const { return m_instrs; }
-		const std::set<CFG*>& calls() const { return m_calls; }
 
+		bool isIndirect() const { return m_indirection; }
 		void setIndirect(bool indirect = true);
 
+		const std::list<Instruction*>& instructions() const { return m_instrs; }
 		void addInstruction(Instruction* instr);
 		void addInstructions(const std::list<Instruction*>& instrs);
 		Instruction* firstInstruction() const;
 		Instruction* lastInstruction() const;
 		void clearInstructions();
 
+		const std::set<CFG*>& calls() const { return m_calls; }
 		void addCall(CFG* cfg);
-		void addCalls(const std::set<CFG*>& calls);
 		void clearCalls();
+
+		const std::map<int, CFG*> signalHandlers() const { return m_signalHandlers; }
+		void addSignalHandler(int sigid, CFG* cfg);
+		void clearSignalHandlers();
 
 	private:
 		int m_size;
 		bool m_indirection;
 		std::list<Instruction*> m_instrs;
 		std::set<CFG*> m_calls;
+		std::map<int, CFG*> m_signalHandlers;
+
 	};
 
 	struct Edge {

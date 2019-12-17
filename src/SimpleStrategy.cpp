@@ -177,7 +177,7 @@ std::set<CfgData::Call> SimpleStrategy::matchCalls(std::set<CfgData::Call>& a, s
 			itA = a.erase(itA);
 			itB = b.erase(itB);
 
-			CfgData::Call newCall(callA.instr);
+			CfgData::Call newCall(callA.block_addr);
 
 			std::set<Addr>::iterator it2A = callA.calls.begin();
 			while (it2A != callA.calls.end()) {

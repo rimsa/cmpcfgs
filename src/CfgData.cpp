@@ -44,17 +44,14 @@ CfgData::CfgData(CFG* cfg) {
 		if (node->type() != CfgNode::CFG_BLOCK)
 			continue;
 
+		assert(node->data() != 0);
 		CfgNode::BlockData* block = static_cast<CfgNode::BlockData*>(node->data());
 		m_blocks.insert(CfgData::Node(block->addr(), block->size()));
 
-		Instruction* last = 0;
-		for (Instruction* instr : block->instructions()) {
+		for (Instruction* instr : block->instructions())
 			m_instrs.insert(instr->addr());
-			last = instr;
-		}
-		assert(last != 0);
 
-		CfgData::Call call(last->addr());
+		CfgData::Call call(block->addr());
 		for (CFG* calledCfg : block->calls()) {
 			call.calls.insert(calledCfg->addr());
 		}
@@ -62,8 +59,8 @@ CfgData::CfgData(CFG* cfg) {
 		if (!call.calls.empty())
 			m_calls.insert(call);
 
-		if (block->hasIndirection())
-			m_indirects.insert(last->addr());
+		if (block->isIndirect())
+			m_indirects.insert(block->addr());
 	}
 }
 

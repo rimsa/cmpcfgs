@@ -107,7 +107,7 @@ CFGsContainer::Lexeme CFGsContainer::nextToken() {
 	Lexeme lex;
 
     int state = 1;
-    while (state != 8) {
+    while (state != 9) {
         int c = nextChar(m_input);
         switch (state) {
             case 1:
@@ -128,22 +128,29 @@ CFGsContainer::Lexeme CFGsContainer::nextToken() {
 				} else if (c == '[') {
 					lex.token += (char) c;
 					lex.type = Lexeme::TKN_BRACKET_OPEN;
-					state = 8;
+					state = 9;
 				} else if (c == ']') {
 					lex.token += (char) c;
 					lex.type = Lexeme::TKN_BRACKET_CLOSE;
-					state = 8;
+					state = 9;
+				} else if (c == ':') {
+					lex.token += (char) c;
+					lex.type = Lexeme::TKN_COLON;
+					state = 9;
 				} else if (c == '\"') {
 					lex.type = Lexeme::TKN_TEXT;
 					state = 6;
-				} else if (c == '#') {
+				} else if (c == '-') {
+					lex.token += (char) c;
 					state = 7;
+				} else if (c == '#') {
+					state = 8;
 				} else if (c == -1) {
 					lex.type = Lexeme::TKN_EOF;
-					state = 8;
+					state = 9;
 				} else {
 					lex.type = Lexeme::TKN_INVALID_TOKEN;
-					state = 8;
+					state = 9;
 				}
 
 				break;
@@ -156,7 +163,7 @@ CFGsContainer::Lexeme CFGsContainer::nextToken() {
 					if (c != -1)
 						m_input.putback(c);
 
-					state = 8;
+					state = 9;
 				}
 
             		break;
@@ -171,7 +178,7 @@ CFGsContainer::Lexeme CFGsContainer::nextToken() {
 					if (c != -1)
 						m_input.putback(c);
 
-					state = 8;
+					state = 9;
 				}
 
             		break;
@@ -180,12 +187,12 @@ CFGsContainer::Lexeme CFGsContainer::nextToken() {
 					lex.token += (char) c;
 					state = 4;
 				} else {
-					lex.data.number = std::stoi(lex.token);
+					lex.data.number = std::stoull(lex.token);
 
 					if (c != -1)
 						m_input.putback(c);
 
-					state = 8;
+					state = 9;
 				}
 
             		break;
@@ -215,17 +222,17 @@ CFGsContainer::Lexeme CFGsContainer::nextToken() {
 					if (c != -1)
 						m_input.putback(c);
 
-					state = 8;
+					state = 9;
 				}
 
 				break;
 			case 6:
 				if (c == -1) {
 					lex.type = Lexeme::TKN_UNEXPECTED_EOF;
-					state = 8;
+					state = 9;
 				} else {
 					if (c == '\"')
-						state = 8;
+						state = 9;
 					else {
 						lex.token += (char) c;
 						state = 6;
@@ -235,18 +242,34 @@ CFGsContainer::Lexeme CFGsContainer::nextToken() {
 				break;
 			case 7:
 				if (c == -1) {
-					state = 8;
+					lex.type = Lexeme::TKN_UNEXPECTED_EOF;
+					state = 9;
+				} else {
+					if (c == '>') {
+						lex.type = Lexeme::TKN_ARROW;
+						lex.token += (char) c;
+						state = 9;
+					} else {
+						lex.type = Lexeme::TKN_INVALID_TOKEN;
+						state = 9;
+					}
+				}
+
+				break;
+			case 8:
+				if (c == -1) {
+					state = 9;
 				} else {
 					if (c == '\n')
 						state = 1;
 					else
-						state = 7;
+						state = 8;
 				}
 
 				break;
 			default:
 				lex.type = Lexeme::TKN_INVALID_TOKEN;
-				state = 8;
+				state = 9;
 				break;
 		}
 	}
@@ -275,6 +298,11 @@ void CFGsContainer::processCFGs() {
 
 					Addr addr = m_currentToken.data.addr;
 					matchToken(Lexeme::TKN_ADDR);
+
+					if (m_currentToken.type == Lexeme::TKN_COLON) {
+						matchToken(Lexeme::TKN_COLON);
+						matchToken(Lexeme::TKN_NUMBER);
+					}
 
 					CFG* cfg = this->cfg(addr);
 					if (!cfg) {
@@ -329,12 +357,17 @@ void CFGsContainer::processCFGs() {
 					}
 					matchToken(Lexeme::TKN_BRACKET_CLOSE);
 
-					assert((addr - blockData->addr()) == block_size);
+					// assert((addr - blockData->addr()) == block_size);
 
 					matchToken(Lexeme::TKN_BRACKET_OPEN);
 					while (m_currentToken.type == Lexeme::TKN_ADDR) {
 						addr = m_currentToken.data.addr;
 						matchToken(Lexeme::TKN_ADDR);
+
+						if (m_currentToken.type == Lexeme::TKN_COLON) {
+							matchToken(Lexeme::TKN_COLON);
+							matchToken(Lexeme::TKN_NUMBER);
+						}
 
 						CFG* call = this->cfg(addr);
 						if (!call) {
@@ -343,6 +376,31 @@ void CFGsContainer::processCFGs() {
 						}
 
 						blockData->addCall(call);
+					}
+					matchToken(Lexeme::TKN_BRACKET_CLOSE);
+
+					matchToken(Lexeme::TKN_BRACKET_OPEN);
+					while (m_currentToken.type == Lexeme::TKN_NUMBER) {
+						int sigid = m_currentToken.data.number;
+						matchToken(Lexeme::TKN_NUMBER);
+
+						matchToken(Lexeme::TKN_ARROW);
+
+						addr = m_currentToken.data.addr;
+						matchToken(Lexeme::TKN_ADDR);
+
+						if (m_currentToken.type == Lexeme::TKN_COLON) {
+							matchToken(Lexeme::TKN_COLON);
+							matchToken(Lexeme::TKN_NUMBER);
+						}
+
+						CFG* handler = this->cfg(addr);
+						if (!handler) {
+							handler = new CFG(addr);
+							m_cfgsMap[addr] = handler;
+						}
+
+						blockData->addSignalHandler(sigid, handler);
 					}
 					matchToken(Lexeme::TKN_BRACKET_CLOSE);
 
@@ -394,6 +452,11 @@ void CFGsContainer::processCFGs() {
 								break;
 							default:
 								assert(false);
+						}
+
+						if (m_currentToken.type == Lexeme::TKN_COLON) {
+							matchToken(Lexeme::TKN_COLON);
+							matchToken(Lexeme::TKN_NUMBER);
 						}
 
 						cfg->addEdge(block, succ);
