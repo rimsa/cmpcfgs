@@ -23,6 +23,7 @@
 */
 
 #include <iostream>
+#include <algorithm>
 
 #include <CFGsContainer.h>
 #include <SimpleStrategy.h>
